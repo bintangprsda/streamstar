@@ -23,6 +23,19 @@ if (!fs.existsSync(uploadsDir)) {
 
 app.use("/uploads", express.static(uploadsDir));
 
+// Serve static frontend files from 'dist' folder
+const distPath = path.join(__dirname, "dist");
+if (fs.existsSync(distPath)) {
+  app.use(express.static(distPath));
+  // Handle SPA routing: serve index.html for any unknown routes
+  app.get("*", (req, res, next) => {
+    if (req.path.startsWith("/api") || req.path.startsWith("/uploads")) {
+      return next();
+    }
+    res.sendFile(path.join(distPath, "index.html"));
+  });
+}
+
 const configPath = path.join(__dirname, "config.json");
 const schedulePath = path.join(__dirname, "schedules.json");
 
