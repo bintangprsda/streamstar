@@ -34,7 +34,7 @@ COPY --from=builder /app/dist ./dist
 RUN mkdir -p uploads
 
 # Expose the port the app runs on
-EXPOSE 3001
+EXPOSE 3000
 
 # Set production environment
 ENV NODE_ENV=production

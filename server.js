@@ -11,7 +11,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const port = 3001;
+const port = 3000;
 
 app.use(cors());
 app.use(express.json());
@@ -33,6 +33,11 @@ if (fs.existsSync(distPath)) {
       return next();
     }
     res.sendFile(path.join(distPath, "index.html"));
+  });
+} else {
+  // Fallback if dist is missing
+  app.get("/", (req, res) => {
+    res.send("<h1>StreamStar Server is running!</h1><p>Note: Frontend build (dist folder) not found. Please run 'npm run build' first.</p>");
   });
 }
 
