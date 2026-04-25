@@ -27,8 +27,8 @@ app.use("/uploads", express.static(uploadsDir));
 const distPath = path.join(__dirname, "dist");
 if (fs.existsSync(distPath)) {
   app.use(express.static(distPath));
-  // Handle SPA routing: serve index.html for any unknown routes
-  app.get("/:path*", (req, res, next) => {
+  // Handle SPA routing: serve index.html for any unknown routes (Middleware version)
+  app.use((req, res, next) => {
     if (req.path.startsWith("/api") || req.path.startsWith("/uploads")) {
       return next();
     }
