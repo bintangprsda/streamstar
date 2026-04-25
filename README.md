@@ -1,76 +1,86 @@
-# 🎥 StreamStar - Live Control Dashboard
+# 🚀 StreamStar: 24/7 Live Streaming Dashboard
 
-StreamStar is a powerful, high-fidelity web dashboard designed for managing live broadcast streams. It provides a premium interface to control FFmpeg-based streaming with advanced features like automated scheduling and self-healing mechanisms.
+StreamStar adalah solusi *full-stack* untuk mengelola siaran langsung 24/7 ke platform seperti YouTube, Facebook, atau Twitch langsung dari VPS Anda. Dilengkapi dengan antarmuka web modern untuk kontrol penuh atas video, jadwal, dan status streaming.
 
-![License](https://img.shields.io/badge/license-MIT-green)
-![Version](https://img.shields.io/badge/version-1.0.0-blue)
-![React](https://img.shields.io/badge/frontend-React%2019-emerald)
-![Node](https://img.shields.io/badge/backend-Node.js-slate)
+## ✨ Fitur Utama
 
-## ✨ Features
-
-- **🚀 Live Control**: Start and stop streams instantly with a single click.
-- **📺 Video Preview**: Integrated video player to verify content before going live.
-- **⏰ Smart Scheduler**: Plan your broadcasts ahead of time with automated execution.
-- **🛡️ Watchdog System**: Automatic self-healing that restarts the stream if FFmpeg crashes or stops unexpectedly.
-- **📝 Real-time Logs**: Live terminal-style logs to monitor system activity and FFmpeg output.
-- **⚙️ Flexible Configuration**: Easily manage RTMP URLs and Stream Keys through a secure settings panel.
-- **🎨 Premium UI**: Modern, glassmorphic dark-mode interface built with Tailwind CSS v4 and Framer Motion.
+- **Live Control Dashboard**: Mulai dan hentikan streaming secara instan.
+- **Smart Watchdog**: Sistem otomatis yang akan mendeteksi jika stream mati dan melakukan restart dalam 10 detik.
+- **Auto-Looping**: Memutar video secara terus-menerus tanpa jeda.
+- **Video Management**: Unggah, hapus, dan pilih video langsung dari browser.
+- **Scheduling System**: Jadwalkan siaran otomatis di masa mendatang menggunakan *node-schedule*.
+- **Real-time Logs**: Pantau keluaran FFmpeg secara langsung dari dashboard.
+- **Deployment Ready**: Teroptimasi untuk Docker dan Coolify.
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: React 19, Vite 8, Tailwind CSS v4, Framer Motion, Lucide React.
-- **Backend**: Node.js, Express, Multer, Node-Schedule.
-- **Streaming Core**: FFmpeg (Process Spawning).
+- **Frontend**: React 19, Vite, Tailwind CSS v4, Framer Motion, Lucide React.
+- **Backend**: Node.js, Express, Multer (File Uploads), Node-Schedule.
+- **Engine**: FFmpeg (Stream Processing).
+- **Infrastructure**: Docker & Coolify.
 
-## 🚀 Getting Started
+---
 
-### Prerequisites
+## 💻 Instalasi Lokal (Windows/Mac/Linux)
 
-- **Node.js** (v18 or higher)
-- **FFmpeg** installed and added to your system's PATH.
+### Prasyarat
+- Node.js (v18+)
+- **FFmpeg (Wajib)**: Pastikan FFmpeg terinstal dan terdaftar di PATH sistem Anda.
 
-### Installation
-
-1. **Clone the repository:**
+### Langkah-langkah
+1. **Clone Repositori**:
    ```bash
    git clone https://github.com/bintangprsda/streamstar.git
    cd streamstar
    ```
-
-2. **Install dependencies:**
+2. **Instal Dependensi**:
    ```bash
    npm install
    ```
-
-3. **Start the application:**
+3. **Jalankan Backend**:
    ```bash
-   # Start both backend and frontend (separate terminals recommended)
    node server.js
+   ```
+4. **Jalankan Frontend**:
+   ```bash
    npm run dev
    ```
+5. Buka `http://localhost:5173` di browser Anda.
 
-4. **Access the dashboard:**
-   Open [http://localhost:5173](http://localhost:5173) in your browser.
+---
 
-## ⚙️ Configuration
+## ☁️ Deployment VPS (Coolify)
 
-1. Go to the **Settings** tab in the dashboard.
-2. Enter your **RTMP URL** (e.g., `rtmp://a.rtmp.youtube.com/live2/`).
-3. Paste your **Stream Key**.
-4. Click **Save Settings**.
+Aplikasi ini telah dikonfigurasi untuk berjalan mulus di VPS menggunakan Coolify.
 
-## 📖 Usage
+### Konfigurasi Coolify
+1. **Build Pack**: Pilih `Dockerfile`.
+2. **Port**: Gunakan port `3001`.
+3. **Persistent Storage (PENTING)**:
+   Agar video dan pengaturan Anda tidak hilang saat restart, tambahkan storage berikut di tab **Storage**:
+   - **Volume Mount**: `Destination: /app/uploads` (Untuk video).
+   - **File Mount**: `Destination: /app/config.json` (Untuk pengaturan stream).
+   - **File Mount**: `Destination: /app/schedules.json` (Untuk jadwal).
 
-1. **Upload Videos**: Navigate to the **Videos** tab and upload your `.mp4`, `.mov`, or `.webm` files.
-2. **Preview**: Click **Select** on any video to see it in the preview player.
-3. **Go Live**: Click **Start** in the dashboard to begin streaming immediately.
-4. **Schedule**: Go to the **Scheduler** tab to set a future date and time for automated streaming.
+---
 
-## 🤝 Contributing
+## ⚠️ Troubleshooting
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+### 1. Error `spawn ffmpeg ENOENT`
+Terjadi karena FFmpeg tidak terinstal di komputer lokal Anda. Pastikan `ffmpeg` bisa dipanggil melalui terminal.
 
-## 📄 License
+### 2. Error `Unrecognized option 'stream_loop'`
+Terjadi jika versi FFmpeg Anda terlalu lama (dibawah v3.0). Gunakan FFmpeg versi terbaru (v6.0+ disarankan).
 
-This project is licensed under the MIT License.
+### 3. Error `http proxy error: /api/...`
+Terjadi jika frontend Vite tidak bisa terhubung ke backend Node.js. Pastikan `server.js` sudah berjalan di port 3001.
+
+---
+
+## 🤝 Kontribusi
+
+Kontribusi selalu terbuka! Silakan ajukan *Pull Request* atau laporkan *issue* jika menemukan bug.
+
+## 📄 Lisensi
+
+Proyek ini dilisensikan di bawah MIT License.
