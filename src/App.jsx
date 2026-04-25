@@ -13,6 +13,7 @@ function App() {
   const [status, setStatus] = useState("OFFLINE");
   const [currentVideo, setCurrentVideo] = useState(null);
   const [logs, setLogs] = useState([]);
+  const [startTime, setStartTime] = useState(null);
   const [config, setConfig] = useState({ rtmpUrl: "", streamKey: "" });
   const [schedules, setSchedules] = useState([]);
   const [serverStatus, setServerStatus] = useState("OFFLINE");
@@ -48,6 +49,7 @@ function App() {
       const data = await res.json();
       setStatus(data.status);
       setCurrentVideo(data.currentVideo);
+      setStartTime(data.startTime);
       setServerStatus("ONLINE");
     } catch (e) {
       setServerStatus("OFFLINE");
@@ -75,7 +77,7 @@ function App() {
     try {
       const res = await fetch("/api/schedules");
       const data = await res.json();
-      setSchedules(data.schedules || []);
+      setSchedules(data || []);
     } catch (e) {}
   };
 
@@ -151,6 +153,7 @@ function App() {
                 status={status} 
                 serverStatus={serverStatus} 
                 onStop={stopStream}
+                startTime={startTime}
               />
 
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

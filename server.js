@@ -80,6 +80,7 @@ let streamStatus = "STOPPED";
 let logs = ["[System] Server started"];
 let scheduledJobs = {};
 let currentVideo = null;
+let streamStartTime = null;
 let isManualStop = false;
 let restarting = false;
 
@@ -114,6 +115,7 @@ function runFFmpeg(video) {
   }
 
   const rtmpEndpoint = `${config.rtmpUrl}${config.streamKey}`;
+  streamStartTime = Date.now();
   addLog(`[FFMPEG] Starting stream: ${video}`);
 
   const args = [
@@ -198,7 +200,11 @@ const initSchedules = () => {
 initSchedules();
 
 app.get("/api/status", (req, res) => {
-  res.json({ status: streamStatus });
+  res.json({ 
+    status: currentVideo ? "STREAMING" : "OFFLINE",
+    currentVideo,
+    startTime: streamStartTime
+  });
 });
 
 app.get("/api/videos", (req, res) => {

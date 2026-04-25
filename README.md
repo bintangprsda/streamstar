@@ -1,22 +1,23 @@
 # 🚀 StreamStar: 24/7 Live Streaming Dashboard
 
-StreamStar adalah solusi *full-stack* untuk mengelola siaran langsung 24/7 ke platform seperti YouTube, Facebook, atau Twitch langsung dari VPS Anda. Dilengkapi dengan antarmuka web modern untuk kontrol penuh atas video, jadwal, dan status streaming.
+StreamStar adalah solusi *full-stack* untuk mengelola siaran langsung 24/7 ke platform seperti YouTube, Facebook, atau Twitch. Dilengkapi dengan antarmuka premium, sistem penjadwalan cerdas, dan optimasi siaran otomatis.
 
-## ✨ Fitur Utama
+## ✨ Fitur Unggulan
 
-- **Live Control Dashboard**: Mulai dan hentikan streaming secara instan.
-- **Smart Watchdog**: Sistem otomatis yang akan mendeteksi jika stream mati dan melakukan restart dalam 10 detik.
-- **Auto-Looping**: Memutar video secara terus-menerus tanpa jeda.
-- **Video Management**: Unggah, hapus, dan pilih video langsung dari browser.
-- **Scheduling System**: Jadwalkan siaran otomatis di masa mendatang menggunakan *node-schedule*.
-- **Real-time Logs**: Pantau keluaran FFmpeg secara langsung dari dashboard.
-- **Deployment Ready**: Teroptimasi untuk Docker dan Coolify.
+- **Live Control Dashboard**: Mulai/hentikan streaming secara instan dengan indikator "Now Playing" yang dinamis.
+- **Global Stop**: Tombol stop cepat yang selalu tersedia di bagian atas dashboard.
+- **Stream Uptime**: Timer *real-time* yang menunjukkan sudah berapa lama siaran Anda mengudara.
+- **Smart Watchdog**: Sistem otomatis yang akan merestart stream dalam 10 detik jika terdeteksi mati.
+- **Enhanced Scheduler**: Penjadwalan siaran dengan format waktu Indonesia (id-ID) dan tombol "Pilih Cepat" (+30m, +1j, Besok).
+- **YouTube Health Optimized**: Konfigurasi FFmpeg otomatis (GOP/Keyframes) untuk memastikan status siaran "Excellent" di YouTube Studio.
+- **Secure Deletion**: Konfirmasi keamanan sebelum menghapus video secara permanen dari penyimpanan.
+- **Modular Architecture**: Kode yang bersih dan terorganisir menggunakan komponen React yang terpisah.
 
 ## 🛠️ Tech Stack
 
 - **Frontend**: React 19, Vite, Tailwind CSS v4, Framer Motion, Lucide React.
-- **Backend**: Node.js, Express, Multer (File Uploads), Node-Schedule.
-- **Engine**: FFmpeg (Stream Processing).
+- **Backend**: Node.js, Express, Multer, Node-Schedule.
+- **Engine**: FFmpeg v6.0+ (Wajib).
 - **Infrastructure**: Docker & Coolify.
 
 ---
@@ -25,62 +26,42 @@ StreamStar adalah solusi *full-stack* untuk mengelola siaran langsung 24/7 ke pl
 
 ### Prasyarat
 - Node.js (v18+)
-- **FFmpeg (Wajib)**: Pastikan FFmpeg terinstal dan terdaftar di PATH sistem Anda.
+- **FFmpeg (v6.0+)**: Pastikan `ffmpeg` terinstal dan ada di PATH sistem.
 
 ### Langkah-langkah
-1. **Clone Repositori**:
+1. **Clone & Install**:
    ```bash
    git clone https://github.com/bintangprsda/streamstar.git
    cd streamstar
-   ```
-2. **Instal Dependensi**:
-   ```bash
    npm install
    ```
-3. **Jalankan Backend**:
+2. **Jalankan Backend**:
    ```bash
    node server.js
    ```
-4. **Jalankan Frontend**:
+3. **Jalankan Frontend**:
    ```bash
    npm run dev
    ```
-5. Buka `http://localhost:5173` di browser Anda.
+4. Akses dashboard di `http://localhost:5173`.
 
 ---
 
 ## ☁️ Deployment VPS (Coolify)
 
-Aplikasi ini telah dikonfigurasi untuk berjalan mulus di VPS menggunakan Coolify.
-
-### Konfigurasi Coolify
-1. **Build Pack**: Pilih `Dockerfile`.
-2. **Port**: Gunakan port `3001`.
-3. **Persistent Storage (PENTING)**:
-   Agar video dan pengaturan Anda tidak hilang saat restart, tambahkan storage berikut di tab **Storage**:
-   - **Volume Mount**: `Destination: /app/uploads` (Untuk video).
-   - **File Mount**: `Destination: /app/config.json` (Untuk pengaturan stream).
-   - **File Mount**: `Destination: /app/schedules.json` (Untuk jadwal).
+### Konfigurasi Persistent Storage
+Sangat disarankan untuk mengatur **Storage** di Coolify agar data tidak hilang saat redeploy:
+- **Volume**: `/app/uploads` (Penyimpanan Video).
+- **File**: `/app/config.json` (Konfigurasi RTMP/Key).
+- **File**: `/app/schedules.json` (Data Penjadwalan).
 
 ---
 
-## ⚠️ Troubleshooting
+## ⚠️ Tips Optimasi
 
-### 1. Error `spawn ffmpeg ENOENT`
-Terjadi karena FFmpeg tidak terinstal di komputer lokal Anda. Pastikan `ffmpeg` bisa dipanggil melalui terminal.
-
-### 2. Error `Unrecognized option 'stream_loop'`
-Terjadi jika versi FFmpeg Anda terlalu lama (dibawah v3.0). Gunakan FFmpeg versi terbaru (v6.0+ disarankan).
-
-### 3. Error `http proxy error: /api/...`
-Terjadi jika frontend Vite tidak bisa terhubung ke backend Node.js. Pastikan `server.js` sudah berjalan di port 3001.
+Jika YouTube memberikan peringatan "Buffering" atau "Keyframe Frequency", pastikan Anda menggunakan versi terbaru aplikasi ini. Kami telah mengunci pengaturan `-g 60` dan `-keyint_min 60` untuk memastikan siaran tetap stabil di 30fps.
 
 ---
 
-## 🤝 Kontribusi
-
-Kontribusi selalu terbuka! Silakan ajukan *Pull Request* atau laporkan *issue* jika menemukan bug.
-
-## 📄 Lisensi
-
-Proyek ini dilisensikan di bawah MIT License.
+## 🤝 Kontribusi & Lisensi
+Dibuat dengan ❤️ oleh [BintangPrsda](https://www.instagram.com/bintangprsda/). Lisensi MIT.
