@@ -147,7 +147,11 @@ function App() {
                 <p className="text-slate-500 mt-2 font-medium">Control center for your 24/7 live broadcast engine.</p>
               </header>
 
-              <StatusCard status={status} serverStatus={serverStatus} />
+              <StatusCard 
+                status={status} 
+                serverStatus={serverStatus} 
+                onStop={stopStream}
+              />
 
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2 space-y-8">

@@ -1,7 +1,7 @@
 import React from "react";
 import { Activity, Power, Signal } from "lucide-react";
 
-const StatusCard = ({ status, serverStatus }) => {
+const StatusCard = ({ status, serverStatus, onStop }) => {
   const isStreaming = status && status !== "OFFLINE" && status !== "ERROR";
 
   return (
@@ -26,10 +26,21 @@ const StatusCard = ({ status, serverStatus }) => {
           <div className="p-2 bg-cyan-500/10 rounded-xl">
             <Activity className="text-cyan-400" size={24} />
           </div>
-          <div className={`px-3 py-1 rounded-full text-xs font-bold ${
-            isStreaming ? "bg-cyan-500/20 text-cyan-400 animate-pulse" : "bg-slate-800 text-slate-400"
-          }`}>
-            {isStreaming ? "STREAMING" : "IDLE"}
+          <div className="flex items-center space-x-2">
+            <div className={`px-3 py-1 rounded-full text-xs font-bold ${
+              isStreaming ? "bg-cyan-500/20 text-cyan-400 animate-pulse" : "bg-slate-800 text-slate-400"
+            }`}>
+              {isStreaming ? "STREAMING" : "IDLE"}
+            </div>
+            {isStreaming && (
+              <button
+                onClick={onStop}
+                className="p-1.5 bg-red-500/20 text-red-400 hover:bg-red-500/40 rounded-lg border border-red-500/30 transition-all active:scale-95 flex items-center justify-center"
+                title="Force Stop Stream"
+              >
+                <Power size={14} />
+              </button>
+            )}
           </div>
         </div>
         <div className="text-sm text-slate-400 font-medium">Current Status</div>
