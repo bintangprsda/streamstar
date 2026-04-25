@@ -155,7 +155,7 @@ function VideoPlayer({ video }) {
   );
 }
 
-function VideoList({ videos, selected, setSelected, onStart }) {
+function VideoList({ videos, selected, setSelected, onStart, onDelete }) {
   if (videos.length === 0) {
     return (
       <div className="text-center py-12 bg-slate-900/40 rounded-2xl border border-slate-800/50">
@@ -175,12 +175,21 @@ function VideoList({ videos, selected, setSelected, onStart }) {
         >
           <div className="flex justify-between items-start mb-4">
             <div className="truncate font-medium text-sm pr-2" title={v}>{v}</div>
-            <button
-              onClick={() => setSelected(v)}
-              className={`text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded ${selected === v ? "bg-emerald-500 text-white" : "bg-slate-800 text-slate-400 hover:text-white"}`}
-            >
-              {selected === v ? "Selected" : "Select"}
-            </button>
+            <div className="flex gap-1">
+              <button
+                onClick={() => setSelected(v)}
+                className={`text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded ${selected === v ? "bg-emerald-500 text-white" : "bg-slate-800 text-slate-400 hover:text-white"}`}
+              >
+                {selected === v ? "Selected" : "Select"}
+              </button>
+              <button
+                onClick={() => onDelete(v)}
+                className="p-1 rounded bg-slate-800 text-slate-500 hover:text-red-400 hover:bg-red-400/10 transition-colors"
+                title="Delete video"
+              >
+                <Trash2 size={12} />
+              </button>
+            </div>
           </div>
           <button
             onClick={() => {
@@ -528,7 +537,13 @@ export default function App() {
                     <h2 className="text-lg font-semibold flex items-center gap-2">
                       <Video size={18} className="text-emerald-400" /> Recent Videos
                     </h2>
-                    <VideoList videos={videos.slice(0, 4)} selected={selected} setSelected={setSelected} onStart={start} />
+                    <VideoList
+                      videos={videos.slice(0, 4)}
+                      selected={selected}
+                      setSelected={setSelected}
+                      onStart={start}
+                      onDelete={handleDelete}
+                    />
                   </div>
                 </div>
                 <div className="space-y-4">
