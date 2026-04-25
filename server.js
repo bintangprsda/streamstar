@@ -117,8 +117,8 @@ function runFFmpeg(video) {
   addLog(`[FFMPEG] Starting stream: ${video}`);
 
   const args = [
-    "-re",
     "-stream_loop", "-1",
+    "-re",
     "-i", videoPath,
     "-c:v", "libx264", "-preset", "veryfast",
     "-c:a", "aac", "-b:a", "128k",
