@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Play, Square, Upload, RefreshCw, Video, Clock, List, Activity } from "lucide-react";
+import { Play, Square, Upload, RefreshCw, Video, Clock, List, Activity, Settings, Trash2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 function useInterval(callback, delay) {
@@ -568,7 +568,7 @@ export default function App() {
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-4">
                 <div className="lg:col-span-2 space-y-4">
                   <h2 className="text-xl font-semibold">Video Library</h2>
-                  <VideoList videos={videos} selected={selected} setSelected={setSelected} onStart={start} />
+                  <VideoList videos={videos} selected={selected} setSelected={setSelected} onStart={start} onDelete={handleDelete} />
                 </div>
                 <div className="space-y-4">
                   <h2 className="text-xl font-semibold">Preview</h2>
