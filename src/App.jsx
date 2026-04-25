@@ -434,6 +434,22 @@ export default function App() {
     }
   };
 
+  const handleDelete = async (filename) => {
+    if (!window.confirm(`Apakah Anda yakin ingin menghapus video "${filename}" secara permanen? Tindakan ini tidak dapat dibatalkan.`)) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/videos/${filename}`, {
+        method: "DELETE",
+      });
+      const data = await response.json();
+      setVideos(data.files || []);
+    } catch (e) {
+      console.error("Failed to fetch videos", e);
+    }
+  };
+
   const fetchVideos = async () => {
     try {
       const res = await fetch("/api/videos");
