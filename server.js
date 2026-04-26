@@ -212,6 +212,36 @@ app.get("/api/videos", (req, res) => {
   res.json({ files });
 });
 
+app.delete("/api/videos/:filename", (req, res) => {
+  const { filename } = req.params;
+  const filePath = path.join(uploadsDir, filename);
+
+  if (!fs.existsSync(filePath)) {
+    return res.status(404).json({ error: "File not found" });
+  }
+
+  // Stop stream if it's the current video being deleted
+  if (currentVideo === filename) {
+    isManualStop = true;
+    if (ffmpegProcess) {
+      ffmpegProcess.kill("SIGTERM");
+      ffmpegProcess = null;
+    }
+    currentVideo = null;
+    streamStatus = "STOPPED";
+    addLog(`Stopping current stream because video ${filename} is being deleted`);
+  }
+
+  try {
+    fs.unlinkSync(filePath);
+    addLog(`Deleted video: ${filename}`);
+    res.json({ success: true });
+  } catch (err) {
+    addLog(`Error deleting video ${filename}: ${err.message}`);
+    res.status(500).json({ error: "Failed to delete file" });
+  }
+});
+
 app.get("/api/logs", (req, res) => {
   res.json({ logs });
 });
@@ -264,6 +294,9 @@ app.delete("/api/schedules/:id", (req, res) => {
 });
 
 app.post("/api/upload", upload.single("file"), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: "No file uploaded" });
+  }
   addLog(`Uploaded: ${req.file.originalname}`);
   res.json({ success: true });
 });

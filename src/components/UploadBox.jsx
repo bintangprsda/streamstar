@@ -12,7 +12,7 @@ const UploadBox = ({ onUploaded }) => {
 
     setIsUploading(true);
     const form = new FormData();
-    form.append("video", file);
+    form.append("file", file);
 
     const xhr = new XMLHttpRequest();
     xhr.open("POST", "/api/upload", true);
