@@ -1,43 +1,39 @@
-# Use Node.js as the base image
-FROM node:20-slim AS builder
-
-# Set working directory
+# STAGE 1: Build Frontend (React)
+FROM node:20-slim AS frontend-builder
 WORKDIR /app
-
-# Copy package files
 COPY package*.json ./
-
-# Install dependencies
 RUN npm install
-
-# Copy all files
 COPY . .
-
-# Build the frontend
 RUN npm run build
 
-# Final image
-FROM node:20-slim
+# STAGE 2: Build Backend (Golang)
+FROM golang:1.21-bullseye AS backend-builder
+WORKDIR /app
+# Check if go.mod exists before copying
+COPY . .
+RUN if [ ! -f go.mod ]; then go mod init streamstart && go mod tidy; fi
+RUN go build -o backend main.go
 
-# Install FFmpeg and other dependencies
-RUN apt-get update && apt-get install -y ffmpeg && rm -rf /var/lib/apt/lists/*
-
+# STAGE 3: Final Production Image
+FROM debian:bullseye-slim
 WORKDIR /app
 
-# Copy built assets and backend files from builder
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/server.js ./
-COPY --from=builder /app/dist ./dist
+# Install FFmpeg and other essentials
+RUN apt-get update && apt-get install -y ffmpeg ca-certificates procps && rm -rf /var/lib/apt/lists/*
 
-# Create uploads directory
+# Copy built assets
+COPY --from=frontend-builder /app/dist ./dist
+COPY --from=backend-builder /app/backend ./backend
+
+# Copy initial config files if they exist
+COPY config.json* ./
+COPY schedules.json* ./
+
+# Create necessary directories
 RUN mkdir -p uploads
 
-# Expose the port the app runs on
+# Expose backend port
 EXPOSE 3001
 
-# Set production environment
-ENV NODE_ENV=production
-
-# Start the application
-CMD ["node", "server.js"]
+# Run the Go binary
+CMD ["./backend"]

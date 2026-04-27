@@ -1,67 +1,57 @@
-# 🚀 StreamStar: 24/7 Live Streaming Dashboard
+# StreamStar 🚀
+**The Ultimate 24/7 Live Stream Orchestrator**
 
-StreamStar adalah solusi *full-stack* untuk mengelola siaran langsung 24/7 ke platform seperti YouTube, Facebook, atau Twitch. Dilengkapi dengan antarmuka premium, sistem penjadwalan cerdas, dan optimasi siaran otomatis.
+StreamStar adalah aplikasi manajemen live streaming 24/7 yang powerful, dirancang untuk menyiarkan konten video ke platform seperti YouTube, Facebook, atau Twitch secara terus-menerus menggunakan teknologi FFmpeg dan backend Golang yang efisien.
 
-## ✨ Fitur Unggulan
+![Dashboard Preview](https://via.placeholder.com/1200x600?text=StreamStar+Professional+Dashboard)
 
-- **Live Control Dashboard**: Mulai/hentikan streaming secara instan dengan indikator "Now Playing" yang dinamis.
-- **Global Stop**: Tombol stop cepat yang selalu tersedia di bagian atas dashboard.
-- **Stream Uptime**: Timer *real-time* yang menunjukkan sudah berapa lama siaran Anda mengudara.
-- **Smart Watchdog**: Sistem otomatis yang akan merestart stream dalam 10 detik jika terdeteksi mati.
-- **Enhanced Scheduler**: Penjadwalan siaran dengan format waktu Indonesia (id-ID) dan tombol "Pilih Cepat" (+30m, +1j, Besok).
-- **YouTube Health Optimized**: Konfigurasi FFmpeg otomatis (GOP/Keyframes) untuk memastikan status siaran "Excellent" di YouTube Studio.
-- **Secure Deletion**: Konfirmasi keamanan sebelum menghapus video secara permanen dari penyimpanan.
-- **Modular Architecture**: Kode yang bersih dan terorganisir menggunakan komponen React yang terpisah.
+## ✨ Fitur Utama
+- **Backend Golang (Gin)**: Performa tinggi dan penggunaan resource rendah.
+- **SQLite Database**: Penyimpanan data yang tangguh dan cepat untuk Config, Jadwal, dan Riwayat (menggantikan sistem file JSON).
+- **Full-Width Dashboard**: Antarmuka luas untuk kontrol penuh atas library video dan stream.
+- **System Monitoring**: Pantau CPU, RAM, dan penggunaan Disk secara real-time (Windows & Linux).
+- **Stream History**: Catat setiap sesi live Anda (Start time, End time, dan Total Duration).
+- **Smart Scheduler**: Jadwalkan video Anda untuk tayang secara otomatis pada jam tertentu.
+- **FFmpeg Logs Modal**: Pantau log runtime FFmpeg melalui modal dengan efek **Glassmorphism** yang elegan.
+- **Auto-Cleanup**: Secara otomatis membersihkan proses FFmpeg yang menggantung untuk menghindari "double ingestion" pada YouTube.
+- **Coolify Ready**: Sudah dilengkapi dengan Dockerfile multi-stage untuk kemudahan deploy ke VPS.
 
 ## 🛠️ Tech Stack
+- **Frontend**: React.js, Tailwind CSS, Lucide Icons.
+- **Backend**: Golang (Gin Framework).
+- **Database**: SQLite (ModernC - Pure Go).
+- **Streaming Engine**: FFmpeg.
 
-- **Frontend**: React 19, Vite, Tailwind CSS v4, Framer Motion, Lucide React.
-- **Backend**: Node.js, Express, Multer, Node-Schedule.
-- **Engine**: FFmpeg v6.0+ (Wajib).
-- **Infrastructure**: Docker & Coolify.
+## 🚀 Cara Menjalankan (Lokal - Windows)
 
----
+### 1. Prasyarat
+- Install [Go](https://go.dev/dl/)
+- Install [Node.js](https://nodejs.org/)
+- Letakkan `ffmpeg.exe` di root folder proyek ini.
 
-## 💻 Instalasi Lokal (Windows/Mac/Linux)
+### 2. Setup & Jalankan
+```powershell
+# Install Frontend Dependencies
+npm install
 
-### Prasyarat
-- Node.js (v18+)
-- **FFmpeg (v6.0+)**: Pastikan `ffmpeg` terinstal dan ada di PATH sistem.
+# Build Frontend
+npm run build
 
-### Langkah-langkah
-1. **Clone & Install**:
-   ```bash
-   git clone https://github.com/bintangprsda/streamstar.git
-   cd streamstar
-   npm install
-   ```
-2. **Jalankan Backend**:
-   ```bash
-   node server.js
-   ```
-3. **Jalankan Frontend**:
-   ```bash
-   npm run dev
-   ```
-4. Akses dashboard di `http://localhost:5173`.
+# Jalankan Backend
+go run main.go
+```
+Aplikasi akan otomatis melakukan migrasi data jika Anda sebelumnya menggunakan sistem file JSON. Database akan disimpan dalam file `streamstar.db`.
 
----
+## ☁️ Deployment (VPS - Coolify/Docker)
 
-## ☁️ Deployment VPS (Coolify)
+Aplikasi ini sudah dioptimalkan untuk di-deploy menggunakan **Coolify**. Cukup hubungkan repository Anda, dan Dockerfile akan menangani semua proses build dan instalasi FFmpeg secara otomatis.
 
-### Konfigurasi Persistent Storage
-Sangat disarankan untuk mengatur **Storage** di Coolify agar data tidak hilang saat redeploy:
-- **Volume**: `/app/uploads` (Penyimpanan Video).
-- **File**: `/app/config.json` (Konfigurasi RTMP/Key).
-- **File**: `/app/schedules.json` (Data Penjadwalan).
+## 📁 Struktur Proyek
+- `/src`: Source code Frontend (React).
+- `main.go`: Inti dari Backend server (Golang).
+- `streamstar.db`: Database SQLite (Dibuat otomatis).
+- `/uploads`: Tempat penyimpanan video yang diupload.
+- `Dockerfile`: Instruksi build untuk produksi/VPS.
 
 ---
-
-## ⚠️ Tips Optimasi
-
-Jika YouTube memberikan peringatan "Buffering" atau "Keyframe Frequency", pastikan Anda menggunakan versi terbaru aplikasi ini. Kami telah mengunci pengaturan `-g 60` dan `-keyint_min 60` untuk memastikan siaran tetap stabil di 30fps.
-
----
-
-## 🤝 Kontribusi & Lisensi
-Dibuat dengan ❤️ oleh [BintangPrsda](https://www.instagram.com/bintangprsda/). Lisensi MIT.
+Dikembangkan dengan ❤️ untuk para Streamer.

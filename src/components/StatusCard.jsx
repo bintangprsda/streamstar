@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Activity, Power, Signal, Clock } from "lucide-react";
+import { Activity, Power, Signal, Clock, Cpu, Database, HardDrive, Wifi, Radio } from "lucide-react";
 
-const StatusCard = ({ status, serverStatus, onStop, startTime }) => {
+const StatusCard = ({ status, serverStatus, onStop, startTime, health, sysStats }) => {
   const isStreaming = status && status !== "OFFLINE" && status !== "ERROR";
   const [uptime, setUptime] = useState("00:00:00");
 
@@ -22,61 +22,81 @@ const StatusCard = ({ status, serverStatus, onStop, startTime }) => {
   }, [isStreaming, startTime]);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-      <div className="bg-slate-900 border border-slate-800 p-6 rounded-3xl shadow-lg">
-        <div className="flex items-center justify-between mb-4">
-          <div className="p-2 bg-emerald-500/10 rounded-xl">
-            <Signal className="text-emerald-400" size={24} />
-          </div>
-          <div className={`px-3 py-1 rounded-full text-xs font-bold ${
-            serverStatus === "ONLINE" ? "bg-emerald-500/20 text-emerald-400" : "bg-red-500/20 text-red-400"
-          }`}>
-            {serverStatus}
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+      {/* Active Streams */}
+      <div className="bg-slate-900/50 border border-slate-800 p-5 rounded-2xl shadow-lg group hover:border-emerald-500/30 transition-all">
+        <div className="flex items-center justify-between mb-3">
+          <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">Active Streams</div>
+          <div className="p-1.5 bg-emerald-500/10 rounded-lg group-hover:scale-110 transition-transform">
+            <Radio className="text-emerald-400" size={16} />
           </div>
         </div>
-        <div className="text-sm text-slate-400 font-medium">Backend Server</div>
-        <div className="text-2xl font-bold text-slate-100 mt-1">Operational</div>
+        <div className="text-3xl font-black text-white">{isStreaming ? "1" : "0"}</div>
+        <div className="mt-2 h-1 w-full bg-slate-800 rounded-full overflow-hidden">
+          <div className={`h-full transition-all duration-1000 ${isStreaming ? "w-full bg-emerald-500" : "w-0"}`} />
+        </div>
       </div>
 
-      <div className="bg-slate-900 border border-slate-800 p-6 rounded-3xl shadow-lg border-l-4 border-l-cyan-500/50">
-        <div className="flex items-center justify-between mb-4">
-          <div className="p-2 bg-cyan-500/10 rounded-xl">
-            <Activity className="text-cyan-400" size={24} />
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className={`px-3 py-1 rounded-full text-xs font-bold ${
-              isStreaming ? "bg-cyan-500/20 text-cyan-400 animate-pulse" : "bg-slate-800 text-slate-400"
-            }`}>
-              {isStreaming ? "STREAMING" : "IDLE"}
-            </div>
-            {isStreaming && (
-              <button
-                onClick={onStop}
-                className="p-1.5 bg-red-500/20 text-red-400 hover:bg-red-500/40 rounded-lg border border-red-500/30 transition-all active:scale-95 flex items-center justify-center shadow-lg"
-                title="Force Stop Stream"
-              >
-                <Power size={14} />
-              </button>
-            )}
+      {/* CPU Usage */}
+      <div className="bg-slate-900/50 border border-slate-800 p-5 rounded-2xl shadow-lg group hover:border-blue-500/30 transition-all">
+        <div className="flex items-center justify-between mb-3">
+          <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">CPU Usage</div>
+          <div className="p-1.5 bg-blue-500/10 rounded-lg group-hover:scale-110 transition-transform">
+            <Cpu className="text-blue-400" size={16} />
           </div>
         </div>
-        <div className="text-sm text-slate-400 font-medium">Current Status</div>
-        <div className="text-2xl font-bold text-slate-100 mt-1">{status}</div>
+        <div className="text-3xl font-black text-white">{sysStats?.cpu || 0}%</div>
+        <div className="mt-2 h-1 w-full bg-slate-800 rounded-full overflow-hidden">
+          <div className="h-full bg-blue-500 transition-all duration-1000" style={{ width: `${sysStats?.cpu || 0}%` }} />
+        </div>
       </div>
 
-      <div className="bg-slate-900 border border-slate-800 p-6 rounded-3xl shadow-lg">
-        <div className="flex items-center justify-between mb-4">
-          <div className="p-2 bg-purple-500/10 rounded-xl">
-            <Clock className="text-purple-400" size={24} />
+      {/* Memory */}
+      <div className="bg-slate-900/50 border border-slate-800 p-5 rounded-2xl shadow-lg group hover:border-purple-500/30 transition-all">
+        <div className="flex items-center justify-between mb-3">
+          <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">Memory</div>
+          <div className="p-1.5 bg-purple-500/10 rounded-lg group-hover:scale-110 transition-transform">
+            <Database className="text-purple-400" size={16} />
           </div>
-          {isStreaming && (
-            <div className="px-3 py-1 bg-purple-500/20 text-purple-400 rounded-full text-xs font-bold font-mono">
-              LIVE
-            </div>
-          )}
         </div>
-        <div className="text-sm text-slate-400 font-medium">Stream Uptime</div>
-        <div className="text-2xl font-bold text-slate-100 mt-1 font-mono tracking-wider">{uptime}</div>
+        <div className="text-xl font-black text-white truncate">{sysStats?.memory || "0/0"}</div>
+        <div className="mt-2 h-1 w-full bg-slate-800 rounded-full overflow-hidden">
+          <div className="h-full bg-purple-500 w-1/3 transition-all duration-1000" />
+        </div>
+      </div>
+
+      {/* Disk Usage */}
+      <div className="bg-slate-900/50 border border-slate-800 p-5 rounded-2xl shadow-lg group hover:border-amber-500/30 transition-all">
+        <div className="flex items-center justify-between mb-3">
+          <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">Disk Usage</div>
+          <div className="p-1.5 bg-amber-500/10 rounded-lg group-hover:scale-110 transition-transform">
+            <HardDrive className="text-amber-400" size={16} />
+          </div>
+        </div>
+        <div className="text-lg font-black text-white truncate">{sysStats?.disk || "0/0"}</div>
+        <div className="mt-2 h-1 w-full bg-slate-800 rounded-full overflow-hidden">
+          <div className="h-full bg-amber-500 w-1/4 transition-all duration-1000" />
+        </div>
+      </div>
+
+      {/* Internet Speed */}
+      <div className="bg-slate-900/50 border border-slate-800 p-5 rounded-2xl shadow-lg group hover:border-cyan-500/30 transition-all">
+        <div className="flex items-center justify-between mb-2">
+          <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">Internet Speed</div>
+          <div className="p-1.5 bg-cyan-500/10 rounded-lg group-hover:scale-110 transition-transform">
+            <Wifi className="text-cyan-400" size={16} />
+          </div>
+        </div>
+        <div className="space-y-1">
+          <div className="flex justify-between items-center text-[10px]">
+            <span className="text-slate-500 font-bold">↑ UPLOAD</span>
+            <span className="text-blue-400 font-black">{isStreaming ? "2.50 Mbps" : "0 Mbps"}</span>
+          </div>
+          <div className="flex justify-between items-center text-[10px]">
+            <span className="text-slate-500 font-bold">↓ DOWNLOAD</span>
+            <span className="text-emerald-400 font-black">1.2 Mbps</span>
+          </div>
+        </div>
       </div>
     </div>
   );

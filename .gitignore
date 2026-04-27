@@ -26,6 +26,10 @@ dist-ssr
 # Stream Control specific
 config.json
 schedules.json
+history.json
+*.bak
+streamstar.db
 uploads/
 ffmpeg.exe
+backend.exe
 bin/

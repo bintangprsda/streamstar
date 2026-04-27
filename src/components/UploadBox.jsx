@@ -4,6 +4,7 @@ import { Upload } from "lucide-react";
 const UploadBox = ({ onUploaded }) => {
   const [progress, setProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   const inputRef = useRef(null);
 
   const handleUpload = (e) => {
@@ -21,19 +22,24 @@ const UploadBox = ({ onUploaded }) => {
       if (event.lengthComputable) {
         const percent = Math.round((event.loaded / event.total) * 100);
         setProgress(percent);
+        if (percent === 100) {
+          setIsProcessing(true);
+        }
       }
     };
 
     xhr.onload = () => {
       setProgress(0);
       setIsUploading(false);
+      setIsProcessing(false);
       onUploaded?.();
       if (inputRef.current) inputRef.current.value = "";
     };
 
     xhr.onerror = () => {
-      alert("Upload failed!");
+      alert("Upload failed! Possible reasons: File too large or connection timeout.");
       setIsUploading(false);
+      setIsProcessing(false);
       setProgress(0);
     };
 
@@ -51,7 +57,7 @@ const UploadBox = ({ onUploaded }) => {
         <Upload className={`text-slate-400 ${isUploading ? "animate-bounce text-emerald-400" : "group-hover:text-emerald-400"}`} />
       </div>
       <div className="text-sm font-medium text-slate-300">
-        {isUploading ? "Uploading..." : "Click to upload video"}
+        {isUploading ? (isProcessing ? "Processing on server..." : "Uploading...") : "Click to upload video"}
       </div>
       <div className="text-xs text-slate-500 mt-1">MP4, MOV or WEBM</div>
       {progress > 0 && (

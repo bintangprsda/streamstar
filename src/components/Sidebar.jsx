@@ -1,5 +1,5 @@
 import React from "react";
-import { LayoutDashboard, Video, Settings, Calendar, Activity } from "lucide-react";
+import { LayoutDashboard, Video, Settings, Calendar, Activity, History } from "lucide-react";
 
 const Sidebar = ({ activeTab, setActiveTab }) => {
   const menuItems = [
@@ -7,6 +7,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
     { id: "videos", label: "Videos", icon: Video },
     { id: "scheduler", label: "Scheduler", icon: Calendar },
     { id: "logs", label: "Logs", icon: Activity },
+    { id: "history", label: "History", icon: History },
     { id: "settings", label: "Settings", icon: Settings },
   ];
 
