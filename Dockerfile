@@ -9,9 +9,9 @@ RUN npm run build
 # STAGE 2: Build Backend (Golang)
 FROM golang:1.21-bullseye AS backend-builder
 WORKDIR /app
-# Check if go.mod exists before copying
+COPY go.mod go.sum ./
+RUN go mod download
 COPY . .
-RUN if [ ! -f go.mod ]; then go mod init streamstart && go mod tidy; fi
 RUN go build -o backend main.go
 
 # STAGE 3: Final Production Image
