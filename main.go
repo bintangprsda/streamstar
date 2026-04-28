@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"sync"
 	"time"
 
@@ -646,13 +647,43 @@ func main() {
 			})
 		})
 	}
+	
+	// Helper middleware to serve static files if they exist, otherwise pass to next handler
+	staticServe := func(staticPath string) gin.HandlerFunc {
+		return func(c *gin.Context) {
+			path := c.Request.URL.Path
+			// Don't intercept API routes
+			if strings.HasPrefix(path, "/api") || strings.HasPrefix(path, "/uploads") {
+				c.Next()
+				return
+			}
+			
+			// Check if file exists in dist
+			filePath := filepath.Join(staticPath, path)
+			if stat, err := os.Stat(filePath); err == nil && !stat.IsDir() {
+				c.File(filePath)
+				c.Abort() // Stop routing, we found the file
+				return
+			}
+			
+			// Proceed to NoRoute if file not found
+			c.Next()
+		}
+	}
 
 	// Serve Frontend
-	if _, err := os.Stat(distPath); err == nil {
-		r.Static("/app", distPath)
+	if stat, err := os.Stat(distPath); err == nil && stat.IsDir() {
+		addLog("Frontend dist folder found. Serving SPA at /")
+		
+		// Mount the static assets directly at root
+		r.Use(staticServe(distPath))
+
+		// SPA Fallback for any other route
 		r.NoRoute(func(c *gin.Context) {
 			c.File(filepath.Join(distPath, "index.html"))
 		})
+	} else {
+		addLog("Warning: Frontend dist folder not found at " + distPath + ". API only mode.")
 	}
 
 	go watchdog()
