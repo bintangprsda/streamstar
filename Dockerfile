@@ -12,10 +12,10 @@ WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
 COPY . .
-RUN go build -o backend main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o backend main.go
 
 # STAGE 3: Final Production Image
-FROM debian:bullseye-slim
+FROM debian:bookworm-slim
 WORKDIR /app
 
 # Install FFmpeg and other essentials
