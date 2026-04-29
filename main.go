@@ -691,6 +691,17 @@ func main() {
 	go watchdog()
 	go scheduler()
 
+	// Custom HTTP server to handle large uploads with long timeouts
+	server := &http.Server{
+		Addr:         ":3001",
+		Handler:      r,
+		ReadTimeout:  30 * time.Minute,
+		WriteTimeout: 30 * time.Minute,
+		IdleTimeout:  60 * time.Minute,
+	}
+
 	addLog("Backend listening at http://localhost:3001")
-	r.Run(":3001")
+	if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		fmt.Printf("Error starting server: %v\n", err)
+	}
 }

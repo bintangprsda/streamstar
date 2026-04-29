@@ -28,19 +28,31 @@ const UploadBox = ({ onUploaded }) => {
       }
     };
 
-    xhr.onload = () => {
-      setProgress(0);
+    const resetState = () => {
       setIsUploading(false);
       setIsProcessing(false);
-      onUploaded?.();
-      if (inputRef.current) inputRef.current.value = "";
+      setProgress(0);
+    };
+
+    xhr.onload = () => {
+      if (xhr.status === 200) {
+        setProgress(0);
+        setIsUploading(false);
+        setIsProcessing(false);
+        onUploaded?.();
+        if (inputRef.current) inputRef.current.value = "";
+      } else {
+        const errorMsg = xhr.status === 413 
+          ? "File too large! Increase 'Body Size Limit' in Coolify settings." 
+          : `Upload failed (Status: ${xhr.status})`;
+        alert(errorMsg);
+        resetState();
+      }
     };
 
     xhr.onerror = () => {
-      alert("Upload failed! Possible reasons: File too large or connection timeout.");
-      setIsUploading(false);
-      setIsProcessing(false);
-      setProgress(0);
+      alert("Network error or connection timeout. Check server disk space or proxy limits.");
+      resetState();
     };
 
     xhr.send(form);
