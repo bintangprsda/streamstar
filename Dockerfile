@@ -7,12 +7,16 @@ COPY . .
 RUN npm run build
 
 # STAGE 2: Build Backend (Golang)
-FROM golang:1.25-bookworm AS backend-builder
+# Using alpine for build stage to save RAM
+FROM golang:1.25-alpine AS backend-builder
 WORKDIR /app
+RUN apk add --no-cache git
 COPY go.mod go.sum ./
 RUN go mod download
 COPY . .
-RUN CGO_ENABLED=0 GOOS=linux go build -v -o backend main.go
+# -p 1 limits parallelism to prevent OOM on small servers
+# -ldflags="-s -w" reduces binary size
+RUN CGO_ENABLED=0 GOOS=linux go build -p 1 -ldflags="-s -w" -o backend main.go
 
 # STAGE 3: Final Production Image
 FROM debian:bookworm-slim
