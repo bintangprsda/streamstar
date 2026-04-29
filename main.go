@@ -193,11 +193,13 @@ func runFFmpeg(video string) {
 	streamStartTime = startTime
 	addLog(fmt.Sprintf("[FFMPEG] Starting stream: %s", video))
 
-	// Fix for Go security: use absolute path for ffmpeg if it exists in current dir
+	// Fix for Go security: use absolute path for ffmpeg if it exists in current dir (Windows only)
 	ffmpegPath := "ffmpeg"
-	if _, err := os.Stat("./ffmpeg.exe"); err == nil {
-		absPath, _ := filepath.Abs("./ffmpeg.exe")
-		ffmpegPath = absPath
+	if runtime.GOOS == "windows" {
+		if _, err := os.Stat("./ffmpeg.exe"); err == nil {
+			absPath, _ := filepath.Abs("./ffmpeg.exe")
+			ffmpegPath = absPath
+		}
 	}
 
 	args := []string{

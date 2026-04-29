@@ -8,3 +8,7 @@ schedules.json
 README.md
 Dockerfile
 .dockerignore
+*.exe
+*.db
+backend
+bin/
