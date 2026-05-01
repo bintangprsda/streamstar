@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"os/exec"
@@ -401,7 +402,9 @@ func main() {
 	// Increase multipart memory for large uploads
 	// By setting this high, we avoid temp files for smaller chunks, 
 	// but Go's SaveUploadedFile handles large files efficiently anyway.
-	r.MaxMultipartMemory = 32 << 20 // 32 MiB
+	// Increase multipart memory for large uploads
+	// Setting this to 128MB helps with faster handling of large file headers/chunks
+	r.MaxMultipartMemory = 128 << 20 // 128 MiB
 
 	r.Static("/uploads", uploadsDir)
 
@@ -557,6 +560,10 @@ func main() {
 		})
 
 		api.POST("/upload", func(c *gin.Context) {
+			// Disable proxy buffering for this request to ensure real-time progress
+			c.Header("X-Accel-Buffering", "no")
+			c.Header("Cache-Control", "no-cache")
+			
 			file, err := c.FormFile("file")
 			if err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{"error": "No file uploaded"})
@@ -564,8 +571,25 @@ func main() {
 			}
 
 			dst := filepath.Join(uploadsDir, file.Filename)
-			if err := c.SaveUploadedFile(file, dst); err != nil {
-				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save file"})
+			
+			// Manual save with a larger buffer (1MB) to optimize disk I/O performance
+			src, err := file.Open()
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to read upload"})
+				return
+			}
+			defer src.Close()
+
+			out, err := os.Create(dst)
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create file"})
+				return
+			}
+			defer out.Close()
+
+			buf := make([]byte, 1024*1024) // 1MB buffer
+			if _, err = io.CopyBuffer(out, src, buf); err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Upload interrupted"})
 				return
 			}
 
